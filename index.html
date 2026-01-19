@@ -2,78 +2,131 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Numerología con Números Anteriores</title>
+  <title>Tómbola de Numerología</title>
   <style>
     body {
-      font-family: Dubai, Arial, sans-serif;
-      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #2e003e, #6a0dad, #000000);
+      color: #fff;
       text-align: center;
-      padding: 40px;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
     }
-    h1 { color: #2c3e50; }
-    input {
-      padding: 8px;
+    header {
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+    h1 {
+      font-size: 2.2em;
+      color: #ffd700;
+      text-shadow: 2px 2px 5px #000;
+    }
+    .tombola {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      margin: 40px auto;
+      max-width: 500px;
+    }
+    .circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ffd700;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      font-weight: bold;
       margin: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 300px;
+      box-shadow: 0 0 10px #000;
     }
-    button {
-      background-color: #3498db;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
+    .contacto {
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      width: 80%;
+      max-width: 600px;
     }
-    button:hover { background-color: #2980b9; }
-    #resultado { 
-      margin-top: 20px; 
-      font-size: 18px; 
-      color: #333; 
-      text-align: left; 
+    a.whatsapp {
       display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    a.whatsapp:hover {
+      background: #128C7E;
+    }
+    .mensaje {
+      margin-top: 30px;
+      font-size: 1.2em;
+      color: #00ffff;
+      text-shadow: 1px 1px 3px #000;
     }
   </style>
 </head>
 <body>
-  <h1>Numerología con Números Anteriores</h1>
+  <header>
+    <h1>✨ Tómbola de Numerología ✨</h1>
+    <p>Los números con mayor energía para ti</p>
+  </header>
 
-  <h3>Ingresa tus números anteriores (separados por comas)</h3>
-  <input type="text" id="numeros" placeholder="Ejemplo: 12, 7, 22, 5">
-  <br>
-  <button onclick="calcular()">Calcular</button>
+  <section class="tombola" id="tombola">
+    <!-- Aquí se insertan los círculos -->
+  </section>
 
-  <div id="resultado"></div>
+  <section class="contacto">
+    <h2>Únete a nuestra comunidad</h2>
+    <p>Haz clic para acceder al grupo de WhatsApp:</p>
+    <a class="whatsapp" href="https://chat.whatsapp.com/TUENLACEDEGRUPO" target="_blank">
+      👉 Grupo de WhatsApp
+    </a>
+  </section>
+
+  <div class="mensaje">
+    🌟 Que la suerte, la energía positiva y la abundancia te acompañen siempre 🌟
+  </div>
 
   <script>
-    function calcular() {
-      let entrada = document.getElementById("numeros").value;
-      if (!entrada) return;
+    // Simulación: los 30 números más fuertes (ejemplo)
+    const fuertes = [12,23,34,45,56,67,78,89,90,11,
+                     22,33,44,55,66,77,88,99,10,20,
+                     30,40,50,60,70,80,91,92,93,94];
 
-      // Convertir la entrada en lista de números
-      let lista = entrada.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n));
-
-      // Reducir cada número
-      let reducidos = lista.map(n => reducir(n));
-
-      // Calcular estadísticas básicas
-      let suma = reducidos.reduce((a,b) => a+b, 0);
-      let promedio = (suma / reducidos.length).toFixed(2);
-
-      // Contar frecuencia de cada número
-      let frecuencia = {};
-      for (let n of reducidos) {
-        frecuencia[n] = (frecuencia[n] || 0) + 1;
+    // Seleccionar aleatoriamente 5 de los 30 más fuertes
+    function seleccionarPrincipales() {
+      let copia = [...fuertes];
+      let seleccionados = [];
+      while (seleccionados.length < 5) {
+        let idx = Math.floor(Math.random() * copia.length);
+        seleccionados.push(copia.splice(idx,1)[0]);
       }
+      return seleccionados;
+    }
 
-      // Mostrar resultados
-      let salida = "<strong>Números reducidos:</strong> " + reducidos.join(", ") + "<br>";
-      salida += "<strong>Promedio:</strong> " + promedio + "<br>";
-      salida += "<strong>Frecuencia:</strong><br>";
-      for (let num in frecuencia) {
-        salida += "Número " + num + ": " + frecuencia[num] + " veces<br>";
+    function mostrarTombola() {
+      let numeros = seleccionarPrincipales();
+      let tombola = document.getElementById("tombola");
+      tombola.innerHTML = "";
+
+      // Mostrar 6 círculos (5 con números + 1 vacío decorativo)
+      for (let i=0; i<6; i++) {
+        let div = document.createElement("div");
+        div.className = "circle";
+        div.textContent = numeros[i] || "";
+        tombola.appendChild(div);
       }
+    }
 
-      document.getElementById("resultado").innerHTML = salida
+    mostrarTombola();
+  </script>
+</body>
+</html>
