@@ -86,7 +86,7 @@
   <section class="contacto">
     <h2>Únete a nuestra comunidad</h2>
     <p>Haz clic para acceder al grupo de WhatsApp:</p>
-    <a class="whatsapp" href="https://chat.whatsapp.com/TUENLACEDEGRUPO" target="_blank">
+    <a class="whatsapp" href="https://chat.whatsapp.com/BzdiMOPKC9TJLwk1QPDbBx" target="_blank">
       👉 Grupo de WhatsApp
     </a>
   </section>
@@ -96,37 +96,87 @@
   </div>
 
   <script>
-    // Simulación: los 30 números más fuertes (ejemplo)
-    const fuertes = [12,23,34,45,56,67,78,89,90,11,
-                     22,33,44,55,66,77,88,99,10,20,
-                     30,40,50,60,70,80,91,92,93,94];
+    // Sorteos Costa Rica (ejemplo últimos 5 días)
+    const sorteosCR = [
+      [45,95,54,9,33,51],
+      [88,74],
+      [48,97,75,50,72,97],
+      [26,3,32,89,55,91],
+      [97,72,26,72,10,52]
+    ];
 
-    // Seleccionar aleatoriamente 5 de los 30 más fuertes
-    function seleccionarPrincipales() {
-      let copia = [...fuertes];
-      let seleccionados = [];
-      while (seleccionados.length < 5) {
-        let idx = Math.floor(Math.random() * copia.length);
-        seleccionados.push(copia.splice(idx,1)[0]);
-      }
-      return seleccionados;
+    // Sorteos Nicaragua (Loto Diaria últimos 5 días)
+    const sorteosNI = [
+      [18,72,64,78],   // 17 enero
+      [93,37,56,46],   // 16 enero
+      [95,95,53,49],   // 15 enero
+      [67,89,62,95],   // 14 enero
+      [41,85,74,99]    // 13 enero
+    ];
+
+    // Unir ambos
+    const sorteos = sorteosCR.concat(sorteosNI);
+
+    // Reglas de equivalencia
+    const equivalencias = {
+      "0": ["0","1","6"],
+      "1": ["0","1","6"],
+      "6": ["0","1","6","4","9"],
+      "2": ["2","5","7"],
+      "5": ["2","5","7"],
+      "7": ["2","5","7"],
+      "3": ["3","8"],
+      "8": ["3","8"],
+      "4": ["4","6","9"],
+      "9": ["4","6","9"]
+    };
+
+    // Generar combinaciones equivalentes para un número
+    function generarCombinaciones(num) {
+      let digitos = String(num).split("");
+      if (digitos.length !== 2) return [];
+      let grupo1 = equivalencias[digitos[0]] || [digitos[0]];
+      let grupo2 = equivalencias[digitos[1]] || [digitos[1]];
+      let combinaciones = [];
+      grupo1.forEach(d1 => grupo2.forEach(d2 => combinaciones.push(d1+d2)));
+      return combinaciones;
     }
 
-    function mostrarTombola() {
-      let numeros = seleccionarPrincipales();
+    // Analizar todos los sorteos
+    function analizar() {
+      let conteo = {};
+      sorteos.flat().forEach(num => {
+        generarCombinaciones(num).forEach(combo => {
+          conteo[combo] = (conteo[combo] || 0) + 1;
+        });
+      });
+
+      // Top 30 más fuertes
+      let fuertes = Object.entries(conteo)
+        .sort((a,b) => b[1]-a[1])
+        .slice(0,30)
+        .map(x => parseInt(x[0]));
+
+      // Seleccionar 5 aleatorios
+      let seleccionados = [];
+      let copia = [...fuertes];
+      while(seleccionados.length<5 && copia.length>0){
+        let idx = Math.floor(Math.random()*copia.length);
+        seleccionados.push(copia.splice(idx,1)[0]);
+      }
+
+      // Mostrar en la tómbola
       let tombola = document.getElementById("tombola");
       tombola.innerHTML = "";
-
-      // Mostrar 6 círculos (5 con números + 1 vacío decorativo)
-      for (let i=0; i<6; i++) {
-        let div = document.createElement("div");
-        div.className = "circle";
-        div.textContent = numeros[i] || "";
+      for(let i=0;i<6;i++){
+        let div=document.createElement("div");
+        div.className="circle";
+        div.textContent=seleccionados[i]||"";
         tombola.appendChild(div);
       }
     }
 
-    mostrarTombola();
+    analizar();
   </script>
 </body>
 </html>
