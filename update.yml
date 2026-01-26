@@ -1,0 +1,24 @@
+name: Actualizar resultados
+
+on:
+  schedule:
+    - cron: "0 3 * * *"  # todos los días a las 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repo
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Instalar dependencias
+        run: pip install requests beautifulsoup4
+
+      - name: Ejecutar scraper
+        run: python scraper
