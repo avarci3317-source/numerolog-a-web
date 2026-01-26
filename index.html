@@ -4,73 +4,15 @@
   <meta charset="UTF-8">
   <title>Tómbola de Numerología Dinámica</title>
   <style>
-    body {
-      font-family: Dubai, Arial, sans-serif;
-      background: linear-gradient(135deg, #2e003e, #6a0dad, #000000);
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    header {
-      padding: 20px;
-      background: rgba(0,0,0,0.6);
-    }
-    h1 {
-      font-size: 2.2em;
-      color: #ffd700;
-      text-shadow: 2px 2px 5px #000;
-    }
-    .tombola {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      margin: 40px auto;
-      max-width: 500px;
-    }
-    .circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #ffd700;
-      color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.5em;
-      font-weight: bold;
-      margin: 10px;
-      box-shadow: 0 0 10px #000;
-    }
-    .ranking {
-      margin-top: 30px;
-      font-size: 1.2em;
-      color: #00ffff;
-      text-shadow: 1px 1px 3px #000;
-    }
-    .contacto {
-      margin: 30px auto;
-      padding: 20px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      width: 80%;
-      max-width: 600px;
-    }
-    a.whatsapp {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #25D366;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    a.whatsapp:hover {
-      background: #128C7E;
-    }
+    body { font-family: Dubai, Arial, sans-serif; background: linear-gradient(135deg,#2e003e,#6a0dad,#000); color:#fff; text-align:center; margin:0; padding:0; }
+    header { padding:20px; background:rgba(0,0,0,0.6); }
+    h1 { font-size:2.2em; color:#ffd700; text-shadow:2px 2px 5px #000; }
+    .tombola { display:flex; flex-wrap:wrap; justify-content:center; margin:40px auto; max-width:500px; }
+    .circle { width:80px; height:80px; border-radius:50%; background:#ffd700; color:#000; display:flex; justify-content:center; align-items:center; font-size:1.5em; font-weight:bold; margin:10px; box-shadow:0 0 10px #000; }
+    .contacto { margin:30px auto; padding:20px; background:rgba(255,255,255,0.1); border-radius:10px; width:80%; max-width:600px; }
+    a.whatsapp { display:inline-block; margin-top:15px; padding:10px 20px; background:#25D366; color:#fff; text-decoration:none; border-radius:5px; font-weight:bold; }
+    a.whatsapp:hover { background:#128C7E; }
+    .ranking { margin-top:30px; font-size:1.2em; color:#00ffff; text-shadow:1px 1px 3px #000; }
   </style>
 </head>
 <body>
@@ -79,47 +21,30 @@
     <p>Los números con mayor energía para ti</p>
   </header>
 
-  <!-- Tómbola -->
   <section class="tombola" id="tombola"></section>
 
-  <!-- Bloque de WhatsApp justo después de la tómbola -->
   <section class="contacto">
     <h2>Únete a nuestra comunidad</h2>
     <p>Haz clic para acceder al grupo de WhatsApp:</p>
-    <a class="whatsapp" href="https://chat.whatsapp.com/BzdiMOPKC9TJLwk1QPDbBx" target="_blank">
-      👉 Grupo de WhatsApp
-    </a>
+    <a class="whatsapp" href="https://chat.whatsapp.com/BzdiMOPKC9TJLwk1QPDbBx" target="_blank">👉 Grupo de WhatsApp</a>
   </section>
 
-  <!-- Ranking debajo del WhatsApp -->
   <div class="ranking" id="ranking"></div>
 
   <script>
-    // Sorteos internos con fecha
-    let sorteos = [
-      {fecha:"2026-01-19", numeros:[45,95,54,9,33,51]},
-      {fecha:"2026-01-20", numeros:[88,74]},
-      {fecha:"2026-01-21", numeros:[48,97,75,50,72,97]},
-      {fecha:"2026-01-22", numeros:[26,3,32,89,55,91]},
-      {fecha:"2026-01-23", numeros:[97,72,26,72,10,52]},
-      {fecha:"2026-01-24", numeros:[18,72,64,78]},
-      {fecha:"2026-01-25", numeros:[93,37,56,46]}
-    ];
+    let sorteos = [];
 
-    const equivalencias = {
-      "0": ["0","1","6"], "1": ["0","1","6"], "6": ["0","1","6","4","9"],
-      "2": ["2","5","7"], "5": ["2","5","7"], "7": ["2","5","7"],
-      "3": ["3","8"], "8": ["3","8"], "4": ["4","6","9"], "9": ["4","6","9"]
-    };
-
-    function generarCombinaciones(num) {
-      let digitos = String(num).split("");
-      if (digitos.length !== 2) return [];
-      let grupo1 = equivalencias[digitos[0]] || [digitos[0]];
-      let grupo2 = equivalencias[digitos[1]] || [digitos[1]];
-      let combinaciones = [];
-      grupo1.forEach(d1 => grupo2.forEach(d2 => combinaciones.push(d1+d2)));
-      return combinaciones;
+    async function cargarSorteos() {
+      try {
+        // Ajuste clave: usar la ruta absoluta de GitHub Pages
+        let res = await fetch("https://avarci3317-source.github.io/numerolog-a-web/resultados.json");
+        let data = await res.json();
+        sorteos = data;
+        analizar();
+      } catch (e) {
+        document.getElementById("tombola").innerHTML = "<p>Error cargando resultados.</p>";
+        console.error("Error:", e);
+      }
     }
 
     function analizar() {
@@ -130,23 +55,16 @@
       let conteo = {};
       sorteos.filter(s => new Date(s.fecha) >= limite).forEach(s => {
         s.numeros.forEach(num => {
-          generarCombinaciones(num).forEach(combo => {
-            conteo[combo] = (conteo[combo] || 0) + 1;
-          });
+          conteo[num] = (conteo[num] || 0) + 1;
         });
       });
 
       if (Object.keys(conteo).length === 0) {
         document.getElementById("tombola").innerHTML = "<p>No hay sorteos en los últimos 7 días.</p>";
-        document.getElementById("ranking").innerHTML = "";
         return;
       }
 
-      let fuertes = Object.entries(conteo)
-        .sort((a,b) => b[1]-a[1])
-        .slice(0,30)
-        .map(x => parseInt(x[0]));
-
+      let fuertes = Object.entries(conteo).sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>parseInt(x[0]));
       let seleccionados = [];
       let copia = [...fuertes];
       while(seleccionados.length<6 && copia.length>0){
@@ -163,16 +81,17 @@
         tombola.appendChild(div);
       });
 
-      let rankingDiv = document.getElementById("ranking");
       let ordenados = Object.entries(conteo).sort((a,b)=>b[1]-a[1]);
       let calientes = ordenados.slice(0,3).map(x=>x[0]+" ("+x[1]+" veces)").join(", ");
       let frios = ordenados.slice(-3).map(x=>x[0]+" ("+x[1]+" veces)").join(", ");
-      rankingDiv.innerHTML = 
+      document.getElementById("ranking").innerHTML =
         "<strong>🔥 Números más calientes:</strong> " + calientes + "<br>" +
         "<strong>❄️ Números más fríos:</strong> " + frios;
     }
 
-    analizar();
+    cargarSorteos();
   </script>
 </body>
 </html>
+
+
