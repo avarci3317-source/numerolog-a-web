@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Tómbola de Numerología</title>
+  <title>Tómbola de Numerología Dinámica</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Dubai, Arial, sans-serif;
       background: linear-gradient(135deg, #2e003e, #6a0dad, #000000);
       color: #fff;
       text-align: center;
@@ -44,28 +44,7 @@
       margin: 10px;
       box-shadow: 0 0 10px #000;
     }
-    .contacto {
-      margin: 30px auto;
-      padding: 20px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      width: 80%;
-      max-width: 600px;
-    }
-    a.whatsapp {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #25D366;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    a.whatsapp:hover {
-      background: #128C7E;
-    }
-    .mensaje {
+    .ranking {
       margin-top: 30px;
       font-size: 1.2em;
       color: #00ffff;
@@ -79,43 +58,23 @@
     <p>Los números con mayor energía para ti</p>
   </header>
 
-  <section class="tombola" id="tombola">
-    <!-- Aquí se insertan los círculos -->
-  </section>
-
-  <section class="contacto">
-    <h2>Únete a nuestra comunidad</h2>
-    <p>Haz clic para acceder al grupo de WhatsApp:</p>
-    <a class="whatsapp" href="https://chat.whatsapp.com/BzdiMOPKC9TJLwk1QPDbBx" target="_blank">
-      👉 Grupo de WhatsApp
-    </a>
-  </section>
-
-  <div class="mensaje">
-    🌟 Que la suerte, la energía positiva y la abundancia te acompañen siempre 🌟
-  </div>
+  <section class="tombola" id="tombola"></section>
+  <div class="ranking" id="ranking"></div>
 
   <script>
-    // Sorteos Costa Rica (ejemplo últimos 5 días)
-    const sorteosCR = [
-      [45,95,54,9,33,51],
-      [88,74],
-      [48,97,75,50,72,97],
-      [26,3,32,89,55,91],
-      [97,72,26,72,10,52]
+    // Sorteos históricos con fecha (ejemplo real)
+    let sorteos = [
+      {fecha:"2026-01-19", numeros:[45,95,54,9,33,51]},   // CR
+      {fecha:"2026-01-20", numeros:[88,74]},              // CR
+      {fecha:"2026-01-21", numeros:[48,97,75,50,72,97]},  // CR
+      {fecha:"2026-01-22", numeros:[26,3,32,89,55,91]},   // CR
+      {fecha:"2026-01-23", numeros:[97,72,26,72,10,52]},  // CR
+      {fecha:"2026-01-19", numeros:[18,72,64,78]},        // NI
+      {fecha:"2026-01-20", numeros:[93,37,56,46]},        // NI
+      {fecha:"2026-01-21", numeros:[95,95,53,49]},        // NI
+      {fecha:"2026-01-22", numeros:[67,89,62,95]},        // NI
+      {fecha:"2026-01-23", numeros:[41,85,74,99]}         // NI
     ];
-
-    // Sorteos Nicaragua (Loto Diaria últimos 5 días)
-    const sorteosNI = [
-      [18,72,64,78],   // 17 enero
-      [93,37,56,46],   // 16 enero
-      [95,95,53,49],   // 15 enero
-      [67,89,62,95],   // 14 enero
-      [41,85,74,99]    // 13 enero
-    ];
-
-    // Unir ambos
-    const sorteos = sorteosCR.concat(sorteosNI);
 
     // Reglas de equivalencia
     const equivalencias = {
@@ -131,7 +90,6 @@
       "9": ["4","6","9"]
     };
 
-    // Generar combinaciones equivalentes para un número
     function generarCombinaciones(num) {
       let digitos = String(num).split("");
       if (digitos.length !== 2) return [];
@@ -142,14 +100,25 @@
       return combinaciones;
     }
 
-    // Analizar todos los sorteos
     function analizar() {
+      let hoy = new Date();
+      let limite = new Date();
+      limite.setDate(hoy.getDate() - 7); // últimos 7 días
+
       let conteo = {};
-      sorteos.flat().forEach(num => {
-        generarCombinaciones(num).forEach(combo => {
-          conteo[combo] = (conteo[combo] || 0) + 1;
+      sorteos.filter(s => new Date(s.fecha) >= limite).forEach(s => {
+        s.numeros.forEach(num => {
+          generarCombinaciones(num).forEach(combo => {
+            conteo[combo] = (conteo[combo] || 0) + 1;
+          });
         });
       });
+
+      if (Object.keys(conteo).length === 0) {
+        document.getElementById("tombola").innerHTML = "<p>No hay sorteos en los últimos 7 días.</p>";
+        document.getElementById("ranking").innerHTML = "";
+        return;
+      }
 
       // Top 30 más fuertes
       let fuertes = Object.entries(conteo)
@@ -157,25 +126,35 @@
         .slice(0,30)
         .map(x => parseInt(x[0]));
 
-      // Seleccionar 5 aleatorios
+      // Seleccionar 6 aleatorios
       let seleccionados = [];
       let copia = [...fuertes];
-      while(seleccionados.length<5 && copia.length>0){
+      while(seleccionados.length<6 && copia.length>0){
         let idx = Math.floor(Math.random()*copia.length);
         seleccionados.push(copia.splice(idx,1)[0]);
       }
 
-      // Mostrar en la tómbola
+      // Mostrar tómbola
       let tombola = document.getElementById("tombola");
       tombola.innerHTML = "";
-      for(let i=0;i<6;i++){
+      seleccionados.forEach(num => {
         let div=document.createElement("div");
         div.className="circle";
-        div.textContent=seleccionados[i]||"";
+        div.textContent=num;
         tombola.appendChild(div);
-      }
+      });
+
+      // Ranking calientes y fríos
+      let rankingDiv = document.getElementById("ranking");
+      let ordenados = Object.entries(conteo).sort((a,b)=>b[1]-a[1]);
+      let calientes = ordenados.slice(0,3).map(x=>x[0]+" ("+x[1]+" veces)").join(", ");
+      let frios = ordenados.slice(-3).map(x=>x[0]+" ("+x[1]+" veces)").join(", ");
+      rankingDiv.innerHTML = 
+        "<strong>🔥 Números más calientes:</strong> " + calientes + "<br>" +
+        "<strong>❄️ Números más fríos:</strong> " + frios;
     }
 
+    // Ejecutar al cargar
     analizar();
   </script>
 </body>
