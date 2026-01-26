@@ -50,6 +50,27 @@
       color: #00ffff;
       text-shadow: 1px 1px 3px #000;
     }
+    .contacto {
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      width: 80%;
+      max-width: 600px;
+    }
+    a.whatsapp {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    a.whatsapp:hover {
+      background: #128C7E;
+    }
   </style>
 </head>
 <body>
@@ -61,33 +82,30 @@
   <section class="tombola" id="tombola"></section>
   <div class="ranking" id="ranking"></div>
 
+  <section class="contacto">
+    <h2>Únete a nuestra comunidad</h2>
+    <p>Haz clic para acceder al grupo de WhatsApp:</p>
+    <a class="whatsapp" href="https://chat.whatsapp.com/BzdiMOPKC9TJLwk1QPDbBx" target="_blank">
+      👉 Grupo de WhatsApp
+    </a>
+  </section>
+
   <script>
-    // Sorteos históricos con fecha (ejemplo real)
+    // Sorteos internos con fecha
     let sorteos = [
-      {fecha:"2026-01-19", numeros:[45,95,54,9,33,51]},   // CR
-      {fecha:"2026-01-20", numeros:[88,74]},              // CR
-      {fecha:"2026-01-21", numeros:[48,97,75,50,72,97]},  // CR
-      {fecha:"2026-01-22", numeros:[26,3,32,89,55,91]},   // CR
-      {fecha:"2026-01-23", numeros:[97,72,26,72,10,52]},  // CR
-      {fecha:"2026-01-19", numeros:[18,72,64,78]},        // NI
-      {fecha:"2026-01-20", numeros:[93,37,56,46]},        // NI
-      {fecha:"2026-01-21", numeros:[95,95,53,49]},        // NI
-      {fecha:"2026-01-22", numeros:[67,89,62,95]},        // NI
-      {fecha:"2026-01-23", numeros:[41,85,74,99]}         // NI
+      {fecha:"2026-01-19", numeros:[45,95,54,9,33,51]},
+      {fecha:"2026-01-20", numeros:[88,74]},
+      {fecha:"2026-01-21", numeros:[48,97,75,50,72,97]},
+      {fecha:"2026-01-22", numeros:[26,3,32,89,55,91]},
+      {fecha:"2026-01-23", numeros:[97,72,26,72,10,52]},
+      {fecha:"2026-01-24", numeros:[18,72,64,78]},
+      {fecha:"2026-01-25", numeros:[93,37,56,46]}
     ];
 
-    // Reglas de equivalencia
     const equivalencias = {
-      "0": ["0","1","6"],
-      "1": ["0","1","6"],
-      "6": ["0","1","6","4","9"],
-      "2": ["2","5","7"],
-      "5": ["2","5","7"],
-      "7": ["2","5","7"],
-      "3": ["3","8"],
-      "8": ["3","8"],
-      "4": ["4","6","9"],
-      "9": ["4","6","9"]
+      "0": ["0","1","6"], "1": ["0","1","6"], "6": ["0","1","6","4","9"],
+      "2": ["2","5","7"], "5": ["2","5","7"], "7": ["2","5","7"],
+      "3": ["3","8"], "8": ["3","8"], "4": ["4","6","9"], "9": ["4","6","9"]
     };
 
     function generarCombinaciones(num) {
@@ -103,7 +121,7 @@
     function analizar() {
       let hoy = new Date();
       let limite = new Date();
-      limite.setDate(hoy.getDate() - 7); // últimos 7 días
+      limite.setDate(hoy.getDate() - 7);
 
       let conteo = {};
       sorteos.filter(s => new Date(s.fecha) >= limite).forEach(s => {
@@ -120,13 +138,11 @@
         return;
       }
 
-      // Top 30 más fuertes
       let fuertes = Object.entries(conteo)
         .sort((a,b) => b[1]-a[1])
         .slice(0,30)
         .map(x => parseInt(x[0]));
 
-      // Seleccionar 6 aleatorios
       let seleccionados = [];
       let copia = [...fuertes];
       while(seleccionados.length<6 && copia.length>0){
@@ -134,7 +150,6 @@
         seleccionados.push(copia.splice(idx,1)[0]);
       }
 
-      // Mostrar tómbola
       let tombola = document.getElementById("tombola");
       tombola.innerHTML = "";
       seleccionados.forEach(num => {
@@ -144,7 +159,6 @@
         tombola.appendChild(div);
       });
 
-      // Ranking calientes y fríos
       let rankingDiv = document.getElementById("ranking");
       let ordenados = Object.entries(conteo).sort((a,b)=>b[1]-a[1]);
       let calientes = ordenados.slice(0,3).map(x=>x[0]+" ("+x[1]+" veces)").join(", ");
@@ -154,7 +168,6 @@
         "<strong>❄️ Números más fríos:</strong> " + frios;
     }
 
-    // Ejecutar al cargar
     analizar();
   </script>
 </body>
